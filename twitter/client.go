@@ -48,6 +48,9 @@ func (t *Twtr) BuildFetchMediaUrls(userId string) func(ctx context.Context) ([]s
 			Expansions: []twitter.Expansion{
 				twitter.ExpansionAttachmentsMediaKeys,
 			},
+			Excludes: []twitter.Exclude{
+				twitter.ExcludeRetweets,
+			},
 			TweetFields: []twitter.TweetField{
 				twitter.TweetFieldCreatedAt,
 			},
