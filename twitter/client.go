@@ -67,6 +67,8 @@ func (t *Twtr) BuildFetchMediaUrls(userId string) func(ctx context.Context) ([]s
 			return nil, false, fmt.Errorf("fetch timeline: %w", err)
 		}
 
+		paginationToken = res.Meta.NextToken
+
 		mediaUrls := []string{}
 		if res.Raw.Includes != nil {
 			media := make(map[string]string, len(res.Raw.Includes.Media))
