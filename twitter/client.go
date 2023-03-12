@@ -41,10 +41,9 @@ func (t *Twtr) FindUserIdByScreenName(ctx context.Context, screenName string) (s
 }
 
 func (t *Twtr) BuildFetchMediaUrls(userId string) func(ctx context.Context) ([]string, bool, error) {
-	paginationToken := ""
+	untilId := ""
 	return func(ctx context.Context) ([]string, bool, error) {
 		opts := twitter.UserTweetTimelineOpts{
-			PaginationToken: paginationToken,
 			Expansions: []twitter.Expansion{
 				twitter.ExpansionAttachmentsMediaKeys,
 			},
@@ -59,6 +58,7 @@ func (t *Twtr) BuildFetchMediaUrls(userId string) func(ctx context.Context) ([]s
 				twitter.MediaFieldMediaKey,
 				twitter.MediaFieldVariants,
 			},
+			UntilID:    untilId,
 			MaxResults: 100,
 		}
 
@@ -67,7 +67,7 @@ func (t *Twtr) BuildFetchMediaUrls(userId string) func(ctx context.Context) ([]s
 			return nil, false, fmt.Errorf("fetch timeline: %w", err)
 		}
 
-		paginationToken = res.Meta.NextToken
+		untilId = res.Meta.OldestID
 
 		mediaUrls := []string{}
 		if res.Raw.Includes != nil {
@@ -104,8 +104,6 @@ func (t *Twtr) BuildFetchMediaUrls(userId string) func(ctx context.Context) ([]s
 			}
 		}
 
-		paginationToken = res.Meta.NextToken
-
-		return mediaUrls, paginationToken != "", nil
+		return mediaUrls, len(res.Raw.Tweets) > 0, nil
 	}
 }
