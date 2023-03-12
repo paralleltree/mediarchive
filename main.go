@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/dghubble/oauth1"
 	twauth "github.com/dghubble/oauth1/twitter"
@@ -163,6 +164,7 @@ func fetchUntilThenProcessInReversedOrder(
 		if err := process(ctx, mediaUrls[len(mediaUrls)-i-1]); err != nil {
 			return fmt.Errorf("process media: %w", err)
 		}
+		time.Sleep(time.Second)
 	}
 
 	return nil
