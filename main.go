@@ -88,6 +88,10 @@ func main() {
 						Name:  "overwrite",
 						Value: false,
 					},
+					&cli.BoolFlag{
+						Name:  "since-last-saved",
+						Usage: "fetch urls since last saved",
+					},
 				},
 				Action: func(c *cli.Context) error {
 					ctx := c.Context
@@ -104,6 +108,9 @@ func main() {
 
 					saver := buildDownloader(logger, buildDestPath, c.Bool("overwrite"))
 					stopPredicate := func(u *url.URL) bool {
+						if !c.Bool("since-last-saved") {
+							return false
+						}
 						dest := buildDestPath(u)
 						return fileExists(dest)
 					}
